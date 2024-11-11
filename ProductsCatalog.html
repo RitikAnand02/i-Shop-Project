@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+        <script src="/node_modules/angular/angular.js"></script>
+        <script>
+          var app=angular.module("DemoApp",[]);
+          app.controller("ProductsController", function($scope, $http){
+             $scope.products=[];
+             $http.get("http://127.0.0.1:8080/productDetails")
+             .then(function(response){
+                $scope.products = response.data;
+             })
+             $scope.txtQty=1;
+             $scope.cartItems=[];
+             $scope.Add = function(item){
+                 
+                $scope.cartItems.push(item);
+             }
+             $scope.Delete=function(index){
+                var verify = confirm("Are you sure , want to Delete?");
+                if(verify==true) {
+                    $scope.cartItems.splice(index,1);
+                }
+             }
+          })
+        </script>
+    </head>
+    <body ng-app="DemoApp" ng-controller="ProductsController">
+        <div class="container">
+          <table width="800" cellspacing="5" cellpadding="5">
+              <tr>
+              <td width="200">
+                  <fieldset>
+                      <legend>
+                          Search Product
+                      </legend>
+                      <dl>
+                          <dt>By Name</dt>
+                          <dd>
+                              <input type="text" ng-model="search">
+                          </dd>
+                          <dt>By Category</dt>
+                          <dd>
+                              <select ng-model="search.CatId">
+                                <option value="1">Electronics</option>
+                                <option value="2">Shoes</option>
+                              </select>
+                          </dd>
+                      </dl>
+                  </fieldset>
+              </td>
+              <td width="700">
+                    <div class="card-deck">
+                            <div class="card" ng-repeat="item in products|filter:search">
+                                <div class="card-header">
+                                    <h2>{{item.Name}}</h2>
+                                </div>
+                                <div class="card-body">
+                                    <img src="{{item.Photo}}" width="200" height="200" class="img-thumbnail" >
+                                    <p>
+                                        {{item.Description}}
+                                        <br>
+                                        <input type="number" min="1" max="4" ng-model="txtQty">
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <h2>{{item.Price | currency:'&#8377;'}}</h2>
+                                    <h3>{{item.Mfd | date}}</h3>
+                                    <div>
+                                        <button class="btn btn-primary" ng-click="Add(item)">Add to Cart</button>
+                                        <button class="btn btn-success">Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+              </td>
+              </tr>
+          </table>
+          <div>
+              <fieldset>
+                  
+                  <legend>Your Cart Items</legend>
+                  <table class="table table-hover">
+                    <thead>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total Amount</th>
+                        <th>Preview</th>
+                        <th>Manage</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="product in cartItems">
+                         <td>{{product.Name}}</td>
+                         <td>{{product.Price}}</td>
+                         <td>{{txtQty}}</td>
+                         <td>{{txtQty*product.Price}}</td>
+                         <td><img src="{{product.Photo}}" width="50" height="50" class="img-thumbnail"></td>
+                         <td><button ng-click="Delete($index)" class="btn btn-danger">Delete</button></td>
+                        </tr>
+                    </tbody>
+                  </table>
+              </fieldset>
+          </div>
+        </div>
+        
+    </body>
+</html>

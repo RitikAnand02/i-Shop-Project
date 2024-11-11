@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
+        <script src="../node_modules/angular/angular.js"></script>
+        <script src="../node_modules/angular/angular-route.js"></script>
+        <script>
+         var app=angular.module("IShop",['ngRoute']);
+         app.config(function($routeProvider){
+            $routeProvider
+            .when("/",{
+                templateUrl:'home.html'
+            })
+            .when("/products",{
+                templateUrl:"products.html"
+            })
+            .when("/login",{
+                templateUrl:"login.html",
+                controller:"LoginController"
+            })
+            .when("/register",{
+                templateUrl:"RegisterUser.html",
+                controller:"RegisterController"
+            })
+            .when("/home",{
+                templateUrl:"home.html"
+            })
+         })
+         app.controller("HomeController", function($scope, $http){
+            $scope.products=[];
+             $http.get("http://127.0.0.1:8080/productDetails")
+             .then(function(response){
+                $scope.products = response.data;
+             })
+         })
+         app.controller("RegisterController", function($scope, $http){
+          $scope.SubmitClick = function(user){
+            $http.post("http://127.0.0.1:8080/RegisterUser",{UserName:user.UserName, Password:user.Password, Email:user.Email, City:user.City, State:user.State})
+            location.href="Success.html";
+          }
+         })
+        </script>
+    </head>
+    <body ng-app="IShop" ng-controller="HomeController">
+        <div class="container">
+            <header>
+                    <h2 class="text-center">Shopping Online - ISHOP</h2>
+                    <div class="btn-toolbar bg-primary text-white  justify-content-between">
+                            <div class="btn-group">
+                                    <a href="#!home" class="btn btn-primary">Home</a>
+                                    <a href="#!products" class="btn btn-primary">Products</a>
+                                    <a href="#!login" class="btn btn-primary">Login</a>
+                            </div>
+                            <div class="btn-group">
+                                <a href="#!register" class="btn btn-primary">Register</a>
+                            </div>
+                    </div>
+            </header>
+            <section style="height: 500px">
+              <table>
+                  <tr height="400">
+                      <td width="200">
+                          <div class="card">
+                            <div class="card-header">
+                                <h4>Filter</h4>
+                            </div>
+                            <div class="card-body">
+                                <dl>
+                                    <dt>By Name</dt>
+                                    <dd><input type="text" ng-model="search" class="form-control"></dd>
+                                    <dt>By Category</dt>
+                                    <dd>
+                                        <select ng-model="search.CatId" class="form-control">
+                                            <option value="1">Electronics</option>
+                                            <option value="2">Shoes</option>
+                                        </select>
+                                    </dd>
+                                    <dt>Results</dt>
+                                    <dd>
+                                      <input ng-model="records" class="form-control" type="number" min="1" max="{{products.length}}">
+                                    </dd>
+                                </dl>
+                            </div>
+                          </div>
+                      </td>
+                      <td width="600">
+                         <div style="position: relative; left: 20px" ng-view>
+
+                         </div>
+                      </td>
+                      <td width="200">
+                          <div class="card">
+                            <div class="card-header">
+                                <h4>Summary</h4>
+                                <dl>
+                                    <dt>Total Items</dt>
+                                    <dd></dd>
+                                    <dt>Amount</dt>
+                                </dl>
+                            </div>
+                          </div>
+                      </td>
+                  </tr>
+              </table>
+            </section>
+            <footer class="bg-primary text-white text-center">
+                <div>
+                    &copy; copyright 2019
+                    <br>
+                    <a>Products</a> | <a>Home</a> | <a>Contact</a>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

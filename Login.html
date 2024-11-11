@@ -1,0 +1,37 @@
+<head>
+    <script src="../node_modules/angular/angular.js"></script>
+    <script>
+     var app=angular.module("DemoApp",[]);
+     app.controller("HomeController", function($scope, $http){
+         $scope.userDetails=[];
+         $http.get("http://127.0.0.1:8080/userDetails")
+         .then(function(response){
+            $scope.userDetails = response.data;
+         })
+         $scope.txtName="";
+         $scope.txtPwd="";
+         $scope.Login = function(){
+            for(var i=0; i<$scope.userDetails.length; i++) {
+             if($scope.userDetails[i].UserName==$scope.txtName && $scope.userDetails[i].Password==$scope.txtPwd) {
+                 location.href="Home.html";
+             } else {
+                 location.href="Error.html";
+             }
+            }
+         }
+     })
+    </script>
+</head>
+<body ng-app="DemoApp" ng-controller="HomeController">
+    <fieldset>
+        <legend>Login</legend>
+        <dl>
+            <dt>User Name</dt>
+            <dd><input type="text" ng-model="txtName"></dd>
+            <dt>Password</dt>
+            <dd><input type="password" ng-model="txtPwd"></dd>
+        </dl>
+        <br>
+        <button ng-click="Login()">Login</button>
+    </fieldset>
+</body>

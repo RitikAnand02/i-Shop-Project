@@ -1,0 +1,31 @@
+<head>
+    <script src="../node_modules/angular/angular.js"></script>
+    <script>
+     var app=angular.module("DemoApp",[]);
+     app.controller("RegisterController", function($scope, $http){
+          $scope.SubmitClick = function(user){
+            $http.post("http://127.0.0.1:8080/RegisterUser",{UserName:user.UserName, Password:user.Password, Email:user.Email, City:user.City, State:user.State})
+            location.href="Success.html";
+          }
+     })
+    </script>
+</head>
+<body ng-app="DemoApp" ng-controller="RegisterController">
+    <form method="POST" ng-submit="SubmitClick(user)">
+        <dl>
+            <dt>User Name</dt>
+            <dd><input type="text" name="UserName" ng-model="user.UserName"></dd>
+            <dt>Password</dt>
+            <dd><input type="password" name="Password" ng-model="user.Password"></dd>
+            <dt>Email</dt>
+            <dd><input type="email" name="Email" ng-model="user.Email"></dd>
+            <dt>City</dt>
+            <dd><input type="text" name="City" ng-model="user.City"></dd>
+            <dt>State</dt>
+            <dd><input type="text" name="State" ng-model="user.State"></dd>
+            <dt>Pin Code</dt>
+            <dd><input type="text" name="PinCode" ng-model="user.PinCode"></dd>
+        </dl>
+        <button>Register</button>
+    </form>
+</body>

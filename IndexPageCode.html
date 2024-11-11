@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+          .leftPanel{ 
+              width:300px;
+              height: 400px;
+              padding: 20px;
+              float: left;
+              position:fixed;
+              top:100px;
+              border:solid 2px darkcyan;
+              border-radius: 10px;
+          }
+          .rightPanel{ 
+              width:600px;
+              height: 400px;
+              padding: 20px;
+              float: right;
+              margin-left: 40px;
+              position: relative;
+          }
+        
+        </style>
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+        <script src="node_modules/angular/angular.js"></script>
+        <script>
+         var app= angular.module("ShoppingApp",[]);
+         app.controller("HomeController", function($scope, $http){
+            $scope.products=[];
+            $scope.categories=[];
+            $http.get("http://127.0.0.1:8080/ProductDetails")
+            .then(function(response){
+                $scope.products = response.data;
+            })
+            $http.get("http://127.0.0.1:8080/CategoryDetails")
+            .then(function(response){
+                $scope.categories = response.data;
+            })
+            $scope.selectedCategory=0;
+            $scope.GetCategory = function(obj){
+               $scope.selectedCategory=obj.CategoryId;
+            }
+            $scope.cartItems = [];
+            $scope.AddToCart = function(item){
+                $scope.cartItems.push(item);
+            }
+         })
+        
+        </script>
+    </head>
+    <body ng-app="ShoppingApp" ng-controller="HomeController">
+       <div class="container">
+        <div class="leftPanel">
+            <label>Top Categories</label>
+            <ul>
+                <li ng-repeat="item in categories">
+                   <a href="" ng-click="GetCategory(item)"> {{item.CategoryName}} </a>
+                </li>
+            </ul>
+            <label>Available Categories</label>
+            <select ng-model="selectedCategory" class="form-control">
+                <option ng-repeat="item in categories" value="{{item.CategoryId}}">
+                    {{item.CategoryName}}
+                </option>
+            </select>
+            <label>Search</label>
+            <input type="text" class="form-control" ng-model="search">
+        </div>
+        <div class="rightPanel">
+            <div>
+                <div class="card" ng-repeat="item in products">
+                    <div ng-if="item.CatId==selectedCategory || item.Name==search">
+                    <div class="card-header">
+                        <h2>{{item.Name}}</h2>
+                    </div>
+                    <div class="card-body">
+                    <img src="{{item.Photo}}" width="50" height="50">
+                    </div>
+                    <div class="card-footer">
+                    <h3>{{item.Price}}</h3>
+                    <button ng-click="AddToCart(item)" class="btn btn-success">Add to Cart</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     
+       </div>
+       <div style="top:500px; left:100px;position: fixed;">
+        <h2>Cart Items</h2>
+        <table  class="table table-hover">
+            <th>Name</th>
+            <th>Price</th>
+            <tr ng-repeat="product in cartItems">
+                <td>{{product.Name}}</td>
+                <td>{{product.Price}}</td>
+            </tr>
+        </table>
+       </div>
+    </body>
+</html>
